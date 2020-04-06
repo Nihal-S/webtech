@@ -48,6 +48,27 @@ startGame = () => {
   getNewQuestion();
 };
 
+function UserAction(data) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+        geneareted_question = this.responseText;
+        geneareted_question = JSON.parse(geneareted_question)
+        console.log(currentQuestion);
+        question.innerText = geneareted_question.question;
+        if(geneareted_question.answer == "yes"){
+          geneareted_question.answer = 1;
+        }
+        else{
+          geneareted_question.answer = 2;
+        }
+       }
+  };
+  xhttp.open("POST", "http://127.0.0.1:5000/getquestion", true);
+  xhttp.setRequestHeader("Content-type", "application/json");
+  xhttp.send(data);
+}
+
 getNewQuestion = () => {
   if (questionCounter >= MAX_QUESTIONS) {
     //go to the end page
@@ -57,23 +78,28 @@ getNewQuestion = () => {
   progressText.innerText = `Question ${questionCounter}/${MAX_QUESTIONS}`;
   //Update the progress bar
   progressBarFull.style.width = `${(questionCounter / MAX_QUESTIONS) * 100}%`;
-
-  const questionIndex = Math.floor((Math.random()*(9-1)) + 1);
-  function get_question() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "http://127.0.0.1:5000/getquestion", true);
-    xhttp.send("class_q="+questionIndex);
-    currentQuestion =  xhttp.responseText;
-  }  
-  // currentQuestion = availableQuesions[questionIndex];
-  console.log(currentQuestion);
-  question.innerText = currentQuestion.question;
-  console.log(question.innerText);
-  choices.forEach(choice => {
-    const number = choice.dataset["number"];
-    choice.innerText = currentQuestion["choice" + number];
-  });
-
+  // alert(questionCounter);
+  if(questionCounter == 1){
+    questionIndex = Math.floor((Math.random()*(9-1)) + 1);
+    // alert(questionIndex)
+  }
+  else{
+    if(classToApply === "correct"){
+      questionIndex++;
+      if(questionIndex == 10){
+        questionIndex = Math.floor((Math.random()*(9-7)) + 7);
+      }
+    }
+    else{
+      questionIndex--;
+      if(questionIndex == 0){
+        questionIndex = Math.floor((Math.random()*(2-1)) + 1);
+      }
+    }
+  }
+  console.log(questionIndex)
+  var data = JSON.stringify({"class_q" : questionIndex.toString()})
+  UserAction(data);
   availableQuesions.splice(questionIndex, 1);
   acceptingAnswers = true;
 };
@@ -81,13 +107,11 @@ getNewQuestion = () => {
 choices.forEach(choice => {
   choice.addEventListener("click", e => {
     if (!acceptingAnswers) return;
-
     acceptingAnswers = false;
     const selectedChoice = e.target;
     const selectedAnswer = selectedChoice.dataset["number"];
-
-    const classToApply =
-      selectedAnswer == currentQuestion.answer ? "correct" : "incorrect";
+    classToApply =
+      selectedAnswer == geneareted_question.answer ? "correct" : "incorrect";
 
     if (classToApply === "correct") {
       incrementScore(CORRECT_BONUS);

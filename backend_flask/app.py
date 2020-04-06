@@ -20,6 +20,7 @@ def send_json(data_as_list):
 def generate_question():
     class_q = request.json['class_q']
     class_q = int(class_q)
+    print(class_q)
     with open('final_dataset.csv', mode='r') as csv_file:
         csv_reader = csv.reader(csv_file)
         dataset = []
@@ -80,5 +81,147 @@ def generate_question():
         return jsonify(send_json(class8[random.randint(0,len(class8)-1)]))
     if(class_q == 9):
         return jsonify(send_json(class9[random.randint(0,len(class9)-1)]))
+
+@app.route('/getallusers', methods=['POST'])
+def getallusers():
+    conn = sqlite3.connect('adaptive_test.db')
+    c = conn.cursor()
+    query = "SELECT username FROM users"
+    c.execute(query)
+    rows = c.fetchall()
+    conn.commit()
+    conn.close()
+    return json.dumps(rows)
+
+@app.route('/getallemails', methods=['POST'])
+def getallemails():
+    conn = sqlite3.connect('adaptive_test.db')
+    c = conn.cursor()
+    query = "SELECT email FROM users"
+    c.execute(query)
+    rows = c.fetchall()
+    conn.commit()
+    conn.close()
+    return json.dumps(rows)
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.json["username"]
+    password = request.json["password"]
+    names = request.post("http://127.0.0.1:5000/getallusers",json={})
+    names = names.json()
+    l = []
+    for i in names:
+        l.append(i[0])
+    names = l
+    if(username in names):
+        conn = sqlite3.connect("adaptive_test.db")
+        c = conn.cursor()
+        query = "SELECT username,password FROM users WHERE username="+username
+        c.execute(query)
+        rows = c.fetchall()
+        conn.commit()
+        conn.close()
+    else:
+        return jsonify(),400
+    if(rows[0][0] == username and rows[0][1] == password):
+        return jsonify(),201
+    else:
+        return jsonify(),400
+
+
+@app.route('/sign_up', methods=['POST'])
+def sign_up():
+    username = request.json["username"]
+    password = request.json["password"]
+    firstname = request.json["firstname"]
+    lastname = request.json["lastname"]
+    email = request.json["email"]
+    names = request.post("http://127.0.0.1:5000/getallusers",json={})
+    names = names.json()
+    l = []
+    for i in names:
+        l.append(i[0])
+    names = l
+    emails = request.post("http://127.0.0.1:5000/getallemails",json={})
+    emails = emails.json()
+    l = []
+    for i in emails:
+        l.append(i[0])
+    emails = l
+    if (email not in emails and username not in names):
+        conn = sqlite3.connect("adaptive_test.db")
+        c = conn.cursor()
+        query = "INSERT INTO users(username,password,firstname,lastname,email) VALUES "+username+","+password+","+firstname+","+lastname+","+email
+        c.execute(query)
+        conn.commit()
+        conn.close()
+        return jsonify(),201
+    else:
+        return jsonify(),400
+
+
+@app.route('/test_details', methods=['POST'])
+def test_details():
+    username = request.json["username"]
+    marks = request.json["marks"]
+    difficulty = request.json["difficulty"]
+    names = request.post("http://127.0.0.1:5000/getallusers",json={})
+    names = names.json()
+    l = []
+    for i in names:
+        l.append(i[0])
+    names = l
+    if(username in names):
+        conn = sqlite3.connect("adaptive_test.db")
+        c = conn.cursor()
+        query = "INSERT INTO test(username,marks,difficulty) VALUES "+username+","+marks+","+difficulty
+        c.execute(query)
+        conn.commit()
+        conn.close()    
+        return jsonify(),201 
+    else:
+        return jsonify(),400 
+
+
+@app.route('/individual_test_details', methods=['POST'])
+def individual_test_details():
+    username = request.json["username"]
+    password = request.json["password"]
+    names = request.post("http://127.0.0.1:5000/getallusers",json={})
+    names = names.json()
+    l = []
+    for i in names:
+        l.append(i[0])
+    names = l
+    if(username in names):
+        conn = sqlite3.connect("adaptive_test.db")
+        c = conn.cursor()
+        query = "SELECT username,password FROM users WHERE username="+username
+        c.execute(query)
+        rows = c.fetchall()
+        conn.commit()
+        conn.close()
+    else:
+        return jsonify(),400
+    if(rows[0][0] == username and rows[0][1] == password):
+        conn = sqlite3.connect("adaptive_test.db")
+        c = conn.cursor()
+        query = "SELECT testid,marks,difficulty FROM test WHERE username="+username
+        c.execute(query)
+        rows = c.fetchall()
+        conn.commit()
+        conn.close()
+        l1= []
+        for i in rows:
+            dictionary = {}
+            dictionary["testid"] = i[0]
+            dictionary["marks"] = i[1]
+            dictionary["difficulty"] = i[2]
+            l1.append(dictionary)
+        return jsonify(l1),201
+    else:
+        return jsonify(),400
+
 if __name__ == '__main__':
     app.run()
