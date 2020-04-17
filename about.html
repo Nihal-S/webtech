@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    var slideIndex = -1;
+    var n = 5;
+    async function showSS(){
+      await new Promise(r => setTimeout(r, 1200));	
+      plusSlide();
+    }
+    function plusSlide(){
+      slideIndex += 1;
+      slideIndex = slideIndex % n;
+      obj.getdetails();
+      obj.getDesc();
+      obj.showButtons();
+      setTimeout(plusSlide, 5000);
+    }
+    function minusSlide(){
+      slideIndex -= 1;
+      if(slideIndex==-1) slideIndex=4;
+      slideIndex = slideIndex % n;
+      obj.getdetails();
+      obj.getDesc();
+      setTimeout(plusSlide, 5000);
+    }
+    var obj = {
+        xhr1 : new XMLHttpRequest(),
+        xhr2 : new XMLHttpRequest(),
+        getdetails : function(){					
+          var fd= new FormData();
+          fd.append("id",slideIndex);
+          this.xhr1.onreadystatechange=this.showmedia;
+          this.xhr1.timeout=6000;
+          this.xhr1.open("POST","http://localhost/getImage.php",true);
+          this.xhr1.responseType = "blob";
+          this.xhr1.send(fd);
+        },
+        getDesc : function(){
+          this.xhr2.onreadystatechange = this.showdetails;
+          this.xhr2.timeout=6000;
+          this.xhr2.open("GET","http://localhost/getDetail.php?id="+slideIndex.toString(), true);
+          this.xhr2.send();
+        },
+        
+        showmedia : function(){
+           
+          if(this.readyState == 4 && this.status == 200){
+            var data = this.response;
+            i=document.createElement("img");
+            i.src=URL.createObjectURL(data);
+            i.width="300";
+            i.height="200";
+            var med = document.getElementById("img");
+            while (med.firstChild)
+              med.removeChild(med.firstChild);
+            med.appendChild(i);
+          }
+        },
+  
+        showdetails : function(){
+          if(this.readyState == 4 && this.status == 200){
+            var info = this.response;
+            document.getElementById("txt").innerHTML = "<i>"+info+"</i>";
+          }
+        },
+          
+  
+        showButtons : async function(){
+          await new Promise(r => setTimeout(r, 5000));
+        }
+             
+      }	 
+  
+  </script>
+  <meta charset="UTF-8">
+  <title>Title goes here</title>
+  <meta name="description" content="Description of your site goes here">
+  <meta name="keywords" content="keyword1, keyword2, keyword3">
+  <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="main">
+<div class="page">
+<div class="header">
+<div class="header-img">
+<h1>Adaptive testing</h1>
+<p>The tougher it goes as you answer.</p>
+</div>
+<div class="menu">
+<ul>
+  <li><a href="index.html">Home</a></li>
+  <li><a href="login.html">Login</a></li>
+  <li><a href="singup.html">Sign up</a></li>
+  <li><a href="results.html">Result</a></li>
+  <li><a href="about.html">About Us</a></li>
+  <li><a href="contact.html">Contact Us</a></li>
+  <li><a href="chat1.html" target="_blank">Support</a></li>
+</ul>
+</div>
+</div>
+<div class="content">
+<div class="left-panel">
+<div class="left-panel-in">
+<h2 class="title">Welcome to our site</h2>
+<p>&nbsp;</p>
+<script> showSS(); </script>
+<div class="cen" id = "img" > </div>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2 class="title">Recent articles<br>
+</h2>
+<p>&nbsp;</p>
+
+<div class="main-products outercolor">
+  <div class="wrapper-fix">
+	  
+	  <div class="width100">
+		  	<div class="Halfwidth abt-left-container">
+			<div class="wow slideInLeft festureslide" style="visibility: visible; animation-name: slideInLeftFeature;">
+		 	<img src="https://s3-ap-southeast-1.amazonaws.com/gw-thinksaas-deploy/website/images/student-image.jpg" class="slidingimage about-img" alt="Thinkexam"> 
+		 </div>
+		  </div>
+	  	<div class="Halfwidth halfwidthcontent abt-left-container-wrapper">
+			 </div>
+	</div></div>
+
+<br>
+<br>
+</p>
+</div>
+</div>
+<!--Designed by--><a href="http://www.htmltemplates.net">
+<img src="images/design_img.gif" class="copyright" alt="HTML Templates"></a>
+<div class="right-panel">
+<div class="right-panel-in">
+  <div class="Halfwidth halfwidthcontent abt-left-container-wrapper">
+    <p class="halfwidthdescrptn">
+      Online Examination system, brought to you by MAN Webs Pvt. Ltd. It was designed with a mission to strive for excellence, with an expertise in driving assessments in the educational domain. We prioritize quality customer experience with a goal to conduct test online assuring minimal human-intervention.</p>
+<p class="halfwidthdescrptn">
+We provide the management of examination and assessment, using an advanced hassle-free transactional interface. The streamlined process flow help with the easy creation of tests, circulation of products, calculation of scores, etc. It provides development of an improved communication link in-between the assessor and the assessee. Multiple tests can be clubbed together to form a product that can be purchased by the candidate and would contribute to the revenue generation. Secured flow of information, multiple payment gateway options, synchronized android and iOS interface will take you to the next level of examination. The panel is self- operational that requires simple online subscription that is extremely easy to use and learn.</p>
+          <p class="halfwidthdescrptn">
+Now, perform exams meeting your requirements to restrict and liberate the movement, depute timelines, transparency of the text, shuffle and randomize, define guidelines, use tags assuring smoother search, allocate penalty on incorrect attempts, and more wherever and whenever you want to. </p>
+  </div>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+<div class="footer">
+</p>
+</div>
+</div>
+</div>
+
+</body></html>

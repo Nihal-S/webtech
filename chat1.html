@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>
+        <title>Support</title>
+        <link href="css/style.css" rel="stylesheet" type="text/css">
+        <script>
+            var obj = 
+		{
+		    send1: function(){
+            var username = sessionStorage.getItem("username")
+		    msg = username+" : " + document.getElementById("msg1").value;
+		    xhr = new XMLHttpRequest();
+		    xhr.open("GET","txtup.php?msg="+msg,true);
+		    
+		    xhr.send();
+                    evs = new EventSource("chat.php");
+                    evs.addEventListener("updateChat",obj.showData,false);
+		},
+		send2: function(){
+		    msg = "Administrator : " + document.getElementById("msg2").value;
+		    xhr = new XMLHttpRequest();
+		    xhr.open("GET","txtup.php?msg="+msg,true);
+		    
+		    xhr.send();
+                    evs = new EventSource("chat.php");
+                    evs.addEventListener("updateChat",obj.showData,false);
+		},
+
+                    
+                showData: function(e){
+                    console.log(e.data);
+		    
+                    var div = document.getElementById("c1");div.innerHTML = "";
+                    arr = e.data.split(";");
+		    for(var i = 0; i<arr.length;++i)
+			div.innerHTML += arr[i] + "<br>";
+		    var div = document.getElementById("c2");
+			div.innerHTML = "";
+			for(var i = 0; i<arr.length;++i)
+			div.innerHTML += arr[i] + "<br>";
+                },
+                onOpen: function() {
+                    console.log("SSE open");
+                },
+                onError: function() {
+                    console.log("SSE error");
+                },
+                onClose: function(e) {
+                    console.log("SSE close");
+                    evs.close();
+                    console.log(e.data);
+                }
+            }
+        </script>
+    </head>
+    <body ng-app = "myApp" ng-controller="myController">
+        <div class="main" ng-init="func()">
+	<h2 class="title">User</h2>
+	<div id = "c1"></div>
+	<input type = "text" id = "msg1"/>
+        <button onclick="obj.send1()">send</button>
+    <br><br> 
+</div>
+<script>
+
+var myApp = angular.module("myApp",[])
+            myApp.controller("myController",function($scope,$http){
+                        $scope.func = function(){
+                        var onSuccessForgot = function(data,status,headers,config){
+                        };
+                        var onErrorForgot = function(data,status,headers,config){
+                            alert("Please login again your session has expired");
+                        };
+                        var username = sessionStorage.getItem("username")
+                        dataObj = JSON.stringify({"username":username.toString()});
+                        var postReq = {
+                            method:'POST',
+                            url:'http://127.0.0.1:5000/chat',
+                            headers: { 'Content-Type': "application/json" },
+                            data: dataObj
+                        }
+                            $http(postReq).success(onSuccessForgot).error(onErrorForgot);   
+                        }
+                    }
+                    );
+</script>
+ </body>
+</html>

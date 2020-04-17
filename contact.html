@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    var slideIndex = -1;
+    var n = 5;
+    async function showSS(){
+      await new Promise(r => setTimeout(r, 1200));	
+      plusSlide();
+    }
+    function plusSlide(){
+      slideIndex += 1;
+      slideIndex = slideIndex % n;
+      obj.getdetails();
+      obj.getDesc();
+      obj.showButtons();
+      setTimeout(plusSlide, 5000);
+    }
+    function minusSlide(){
+      slideIndex -= 1;
+      if(slideIndex==-1) slideIndex=4;
+      slideIndex = slideIndex % n;
+      obj.getdetails();
+      obj.getDesc();
+      setTimeout(plusSlide, 5000);
+    }
+    var obj = {
+        xhr1 : new XMLHttpRequest(),
+        xhr2 : new XMLHttpRequest(),
+        getdetails : function(){					
+          var fd= new FormData();
+          fd.append("id",slideIndex);
+          this.xhr1.onreadystatechange=this.showmedia;
+          this.xhr1.timeout=6000;
+          this.xhr1.open("POST","http://localhost/getImage.php",true);
+          this.xhr1.responseType = "blob";
+          this.xhr1.send(fd);
+        },
+        getDesc : function(){
+          this.xhr2.onreadystatechange = this.showdetails;
+          this.xhr2.timeout=6000;
+          this.xhr2.open("GET","http://localhost/getDetail.php?id="+slideIndex.toString(), true);
+          this.xhr2.send();
+        },
+        
+        showmedia : function(){
+           
+          if(this.readyState == 4 && this.status == 200){
+            var data = this.response;
+            i=document.createElement("img");
+            i.src=URL.createObjectURL(data);
+            i.width="300";
+            i.height="200";
+            var med = document.getElementById("img");
+            while (med.firstChild)
+              med.removeChild(med.firstChild);
+            med.appendChild(i);
+          }
+        },
+  
+        showdetails : function(){
+          if(this.readyState == 4 && this.status == 200){
+            var info = this.response;
+            document.getElementById("txt").innerHTML = "<i>"+info+"</i>";
+          }
+        },
+          
+  
+        showButtons : async function(){
+          await new Promise(r => setTimeout(r, 5000));
+        }
+             
+      }	 
+  
+  </script>
+  <meta charset="UTF-8">
+  <title>Contact Us</title>
+  <meta name="description" content="Description of your site goes here">
+  <meta name="keywords" content="keyword1, keyword2, keyword3">
+  <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="main">
+<div class="page">
+<div class="header">
+<div class="header-img">
+<h1>Adaptive testing</h1>
+<p>The tougher it goes as you answer.</p>
+</div>
+<div class="menu">
+<ul>
+  <li><a href="index.html">Home</a></li>
+  <li><a href="login.html">Login</a></li>
+  <li><a href="singup.html">Sign up</a></li>
+  <li><a href="results.html">Result</a></li>
+  <li><a href="about.html">About Us</a></li>
+  <li><a href="contact.html">Contact Us</a></li>
+  <li><a href="chat1.html" target="_blank">Support</a></li>
+</ul>
+</div>
+</div>
+<div class="content">
+<div class="left-panel">
+<div class="left-panel-in">
+<h2 class="title">Welcome to our site</h2>
+<p>&nbsp;</p>
+<script> showSS(); </script>
+<div class="cen" id = "img" > </div>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2 class="title">Recent articles<br>
+</h2>
+<p>&nbsp;</p>
+
+<div class="main-products outercolor">
+  <div class="wrapper-fix">
+   
+    <article class="cnct_right-wrapper">
+		
+      <h2 class="smallhdng">Communication Details</h2>
+          <h5 class="smallhdng-content">Feel free to get in touch with our team!</h5>
+      <ul class="contactul">
+      <li>
+        <span class="contacticon contact-email"></span>
+        <div class="contact_cntnt">
+          <span class="cntctinrhdng">WRITE TO US</span>
+          <span class="cntctinrinfo info-links">sales@ManExams.com</span>
+        </div>
+        </li>
+      <li>
+      <span class="contacticon contact-mobile"></span>
+        <div class="contact_cntnt">
+          <span class="cntctinrhdng">TALK TO AN EXPERT</span>
+          <span class="cntctinrinfo">+91 9110897792</span>
+        </div>
+        </li>
+      <li>
+        <span class="contacticon contact-address"></span>
+        <div class="contact_cntnt">
+          <span class="cntctinrhdng">REACH US AT</span>
+          <span class="cntctinrinfo">A-43, Sector 63, <br> Bengaluru -560085</span>
+        </div>
+        </li>
+      </ul>
+          <div class="contact-map">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.583105385619!2d77.5323277148216!3d12.93449479088035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae3e468d8d36d3%3A0x694d74f6ac640acf!2sPES%20University!5e0!3m2!1sen!2sin!4v1586843623737!5m2!1sen!2sin" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+              </div>
+      </article>
+<br>
+<br>
+</p>
+</div>
+</div>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+<div class="footer">
+</div>
+</div>
+</p>
+</div>
+</div>
+</div>
+
+</body></html>

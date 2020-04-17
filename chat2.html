@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="css/style.css" rel="stylesheet" type="text/css">
+        <script>
+            var obj = 
+		{
+		    send1: function(){
+		    msg = "User : " + document.getElementById("msg1").value;
+		    xhr = new XMLHttpRequest();
+		    xhr.open("GET","txtup.php?msg="+msg,true);
+		    
+		    xhr.send();
+                    evs = new EventSource("chat.php");
+                    evs.addEventListener("updateChat",obj.showData,false);
+		},
+		send2: function(){
+		    msg = "Administrator : " + document.getElementById("msg2").value;
+		    xhr = new XMLHttpRequest();
+		    xhr.open("GET","txtup.php?msg="+msg,true);
+		    
+		    xhr.send();
+                    evs = new EventSource("chat.php");
+                    evs.addEventListener("updateChat",obj.showData,false);
+		},
+
+                    
+                showData: function(e){
+                    console.log(e.data);
+		    
+                    var div = document.getElementById("c1");div.innerHTML = "";
+                    arr = e.data.split(";");
+		    for(var i = 0; i<arr.length;++i)
+			div.innerHTML += arr[i] + "<br>";
+		    var div = document.getElementById("c2");
+			div.innerHTML = "";
+			for(var i = 0; i<arr.length;++i)
+			div.innerHTML += arr[i] + "<br>";
+                },
+                onOpen: function() {
+                    console.log("SSE open");
+                },
+                onError: function() {
+                    console.log("SSE error");
+                },
+                onClose: function(e) {
+                    console.log("SSE close");
+                    evs.close();
+                    console.log(e.data);
+                }
+            }
+        </script>
+    </head>
+    <body class="">
+        <div class="main">
+	<h2 class="title">Test Administrator</h2>
+	<div id = "c1"></div>
+	<input type = "text" id = "msg2"/>
+        <button onclick="obj.send2()" >send</button>	
+    </div>
+    </body>
+</html>

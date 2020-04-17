@@ -1,0 +1,98 @@
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<title>Nature</title>
+		<script>
+		var slideIndex = -1;
+		var n = 5;
+		async function showSS(){
+			await new Promise(r => setTimeout(r, 1200));	
+			plusSlide();
+		}
+		function plusSlide(){
+			slideIndex += 1;
+			slideIndex = slideIndex % n;
+			obj.getdetails();
+			obj.getDesc();
+			obj.showButtons();
+			setTimeout(plusSlide, 5000);
+		}
+		function minusSlide(){
+			slideIndex -= 1;
+			if(slideIndex==-1) slideIndex=4;
+			slideIndex = slideIndex % n;
+			obj.getdetails();
+			obj.getDesc();
+			setTimeout(plusSlide, 5000);
+		}
+		var obj = {
+				xhr1 : new XMLHttpRequest(),
+				xhr2 : new XMLHttpRequest(),
+				getdetails : function(){					
+					var fd= new FormData();
+					fd.append("id",slideIndex);
+					this.xhr1.onreadystatechange=this.showmedia;
+					this.xhr1.timeout=6000;
+					this.xhr1.open("POST","http://localhost/getImage.php",true);
+					this.xhr1.responseType = "blob";
+					this.xhr1.send(fd);
+				},
+				getDesc : function(){
+					this.xhr2.onreadystatechange = this.showdetails;
+					this.xhr2.timeout=6000;
+					this.xhr2.open("GET","http://localhost/getDetail.php?id="+slideIndex.toString(), true);
+					this.xhr2.send();
+				},
+				
+				showmedia : function(){
+				   
+					if(this.readyState == 4 && this.status == 200){
+						var data = this.response;
+						i=document.createElement("img");
+						i.src=URL.createObjectURL(data);
+						i.width="300";
+						i.height="200";
+						var med = document.getElementById("img");
+						while (med.firstChild)
+							med.removeChild(med.firstChild);
+						med.appendChild(i);
+					}
+				},
+
+				showdetails : function(){
+					if(this.readyState == 4 && this.status == 200){
+						var info = this.response;
+						document.getElementById("txt").innerHTML = "<i>"+info+"</i>";
+					}
+				},
+					
+	
+				showButtons : async function(){
+					await new Promise(r => setTimeout(r, 5000));
+					document.getElementById("next").style.display="block";
+					document.getElementById("prev").style.display="block";
+				}
+				     
+			}	 
+
+</script>
+	</head>
+	<style>
+	.cen {
+  text-align: center;
+  font-family: Sans-Serif;
+  margin: auto;
+  padding: 10px;
+}	
+	</style>
+	<body>
+	<p class="cen"><u><b>Nature</b> - The phenomena of the physical world, and also to life in general. </u></p><br>
+	<script> showSS(); </script>
+	<button class="cen" id="prev" type="button" onclick="minusSlide()" style="display:none"><h3><</h3></button>
+	<div class="cen" id = "img"> </div>
+	<div class="cen" id="txt"> </div>
+	<button class="cen" id="next" type="button" onclick="plusSlide()" style="display:none"><h3>></h3></button>
+	</body>
+</html>
+

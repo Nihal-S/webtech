@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Index</title>
+  <meta name="description" content="Description of your site goes here">
+  <meta name="keywords" content="keyword1, keyword2, keyword3">
+  <link href="css/style.css" rel="stylesheet" type="text/css">
+  <script>
+    var slideIndex = -1;
+    var n = 5;
+    async function showSS(){
+      await new Promise(r => setTimeout(r, 1200));	
+      plusSlide();
+    }
+    function plusSlide(){
+      slideIndex += 1;
+      slideIndex = slideIndex % n;
+      obj.getdetails();
+      setTimeout(plusSlide, 5000);
+    }
+    function minusSlide(){
+      slideIndex -= 1;
+      if(slideIndex==-1) slideIndex=4;
+      slideIndex = slideIndex % n;
+      obj.getdetails();
+      setTimeout(plusSlide, 5000);
+    }
+    var obj = {
+        xhr1 : new XMLHttpRequest(),
+        xhr2 : new XMLHttpRequest(),
+        getdetails : function(){					
+          var fd= new FormData();
+          fd.append("id",slideIndex);
+          this.xhr1.onreadystatechange=this.showmedia;
+          this.xhr1.timeout=6000;
+          this.xhr1.open("POST","http://localhost/getImage.php",true);
+          this.xhr1.responseType = "blob";
+          this.xhr1.send(fd);
+        },
+        
+        showmedia : function(){
+           
+          if(this.readyState == 4 && this.status == 200){
+            var data = this.response;
+            i=document.createElement("img");
+            i.src=URL.createObjectURL(data);
+            i.width="300";
+            i.height="200";
+            var med = document.getElementById("img");
+            while (med.firstChild)
+              med.removeChild(med.firstChild);
+            med.appendChild(i);
+          }
+        },
+          
+  
+        showButtons : async function(){
+          await new Promise(r => setTimeout(r, 5000));
+        }
+             
+      }	 
+  
+  </script>
+</head>
+<body>
+<div class="main">
+<div class="page">
+<div class="header">
+<div class="header-img">
+<h1>Adaptive testing</h1>
+<p>The tougher it goes as you answer.</p>
+</div>
+<div class="menu">
+<ul>
+  <li><a href="index.html">Home</a></li>
+  <li><a href="login.html">Login</a></li>
+  <li><a href="singup.html">Sign up</a></li>
+  <li><a href="results.html">Result</a></li>
+  <li><a href="about.html">About Us</a></li>
+  <li><a href="contact.html">Contact Us</a></li>
+  <li><a href="chat1.html" target="_blank">Support</a></li>
+</ul>
+</div>
+<div class="content">
+<div class="left-panel">
+<div class="left-panel-in">
+<h2 class="title">Welcome to our site</h2>
+<div>
+  <p>&nbsp;</p>
+  <script> showSS(); </script>
+  <div class="cen" id = "img" > </div>
+  </div>
+  <p>&nbsp;</p>
+<p>MAN Adaptive Testing successively selects questions for the purpose of maximizing the precision of the exam based on what is known about the examinee from previous questions. From the examinee's perspective, the difficulty of the exam seems to tailor itself to their level of ability.<br>
+<br>
+</p>
+</div>
+</div>
+<a href="http://www.htmltemplates.net">
+<img src="images/design_img.gif" class="copyright" alt="HTML Templates"></a>
+<div class="right-panel">
+<div class="right-panel-in">
+
+<h3>Categories</h3>
+<ul>
+  <li><a href="index.html">Home</a></li>
+  <li><a href="login.html">Login</a></li>
+  <li><a href="singup.html">Sign up</a></li>
+  <li><a href="results.html">Result</a></li>
+  <li><a href="about.html">About Us</a></li>
+  <li><a href="contact.html">Contact Us</a></li>
+  <li><a href="chat1.html" target="_blank">Support</a></li>
+</ul>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+<div class="footer">
+</div>
+</div>
+</div>
+</body></html>

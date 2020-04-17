@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Login form</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="custom.css">
+
+    </head>
+
+    <body ng-app = "myApp">
+        <div class="menu" style="width: 100%;">
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="login.html">Login</a></li>
+              <li><a href="singup.html">Sign up</a></li>
+              <li><a href="results.html">Result</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="chat1.html" target="_blank">Support</a></li>
+            </ul>
+            </div>
+        <div class="container ">
+            <div class="row">            
+                <div class="login-container col-lg-4 col-md-6 col-sm-8 col-xs-12">
+                     <div class="login-title text-center">
+                            <h2><span><strong>MAN ADAPTIVE TESTING</strong></span></h2>
+                     </div>
+                    <div class="login-content">
+                        <div class="login-header ">
+                            <h3><strong>Welcome </strong></h3>
+                            
+                        </div>
+                        <div class="login-body" ng-controller = "loginController">
+                            <form role="form" action="" method="" class="login-form">
+                                <div class="form-group ">
+                                    <div class="pos-r">                                        
+                                        <input ng-model="username" ng-blur="showMsg(username)" id="form-username" type="text" name="form-username" placeholder="Username..." class="form-username form-control">
+                                        <i class="fa fa-user"></i>
+                                        <span></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="pos-r">                                    
+                                        <input ng-model="password" id="form-password" type="password" name="form-password" placeholder="Password..." class="form-password form-control" >
+                                        <i class="fa fa-lock"></i>
+                                        <span></span>                                        
+                                    </div>
+                                </div>
+                                <div class="form-group text-right">     
+                                    <a ng-click="forgotpassword()" href="#" class="bold"> Forgot password?</a>
+                                </div>   
+
+                                <div class="form-group">     
+                                    <a ng-click="confirmLogin()" type="submit" class="btn btn-warning form-control"><strong>Sign in</strong></a>  
+                                </div>   
+                                                                              
+                            </form>
+                        </div>                     
+                    </div>
+                    <div class="login-footer text-center template">
+                        <h5>Don't have an account?<a href="singup.html" class="bold"> Sign up </a>     </h5>
+                         
+                    </div>
+                </div> 
+
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script>
+            var myApp = angular.module("myApp",[])
+            myApp.controller("loginController",function($scope,$http){
+                console.log($scope)
+                $scope.showMsg = function(username){
+                    var onSuccess = function (data, status, headers, config) {
+                        $scope.data = data;
+                        var i = 0;
+                        var usernames = []
+                        for(i = 0; i < data.length;i++){
+                            name = data[i][0];
+                            usernames.push(name);
+                        }
+                        if(!usernames.includes(username)){
+                            alert("Username doesn't exist")
+                        }
+                    }
+                    var onError = function (data, status, headers, config) {
+                        $scope.error = status;
+                    }
+                
+                    $http.post('http://127.0.0.1:5000/getallusers', {})
+                         .success(onSuccess)
+                         .error(onError);
+
+                    }
+                $scope.confirmLogin = function(){
+                    var onSuccessLogin = function(data,status,headers,config){
+                        sessionStorage.setItem("username",$scope.username);
+                        window.location.href = "game.html";
+                    }
+                    var onErrorLogin = function (data, status, headers, config) {
+                        alert("Username and password doesn't match");
+                    };
+                    dataObj = JSON.stringify({"username":$scope.username.toString(),"password":$scope.password.toString()});
+                    var postReq = {
+                        method:'POST',
+                        url:'http://127.0.0.1:5000/login',
+                        headers: { 'Content-Type': "application/json" },
+                        data: dataObj
+                    };
+                    $http(postReq).success(onSuccessLogin).error(onErrorLogin);   
+                    }
+
+
+                $scope.forgotpassword = function(){
+                        var username = prompt("Please enter your username");
+                        
+                        var onSuccessForgot = function(data,status,headers,config){
+                            alert("Your password has been sent to your registered email-id");
+                        };
+                        var onErrorForgot = function(data,status,headers,config){
+                            alert("Username doesn't exist please signup");
+                        };
+                        if(username != null){
+                            dataObj = JSON.stringify({"username":username});
+                            var postReq = {
+                                method:'POST',
+                                url:'http://127.0.0.1:5000/forgotpassword',
+                                headers: { 'Content-Type': "application/json" },
+                                data: dataObj
+                            };
+                            $http(postReq).success(onSuccessForgot).error(onErrorForgot);   
+                        }
+                    }
+
+            });
+        </script>
+    </body>
+
+</html>
+
+

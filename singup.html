@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sign up</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="custom.css">
+
+    </head>
+
+    <body>
+        <div class="menu">
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="login.html">Login</a></li>
+              <li><a href="singup.html">Sign up</a></li>
+              <li><a href="results.html">Result</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="chat1.html" target="_blank">Support</a></li>
+            </ul>
+            </div>
+        <div class="container " ng-app = "myApp" ng-controller="signupController">
+            <div class="row">            
+                <div class="login-container col-lg-4 col-md-6 col-sm-8 col-xs-12">
+                     <div class="login-title text-center">
+                         <p>&nbsp;</p>
+                         <p>&nbsp;</p>
+                            <h2><span><strong>MAN ADAPTIVE TESTING</strong></span></h2>
+                     </div>
+                    <div class="login-content">
+                        <div class="login-header ">
+                            <h3><strong>Welcome </strong></h3>
+                            
+                        </div>
+                        <div class="login-body">
+                            <form role="form" action="" method="post" class="login-form">
+                                <div class="form-group ">
+                                    <div class="pos-r">                                        
+                                        <input ng-model="firstname" ng-blur = "showname()" id="form-firstname" type="text" name="form-username" placeholder="Firstname..." class="form-username form-control" required>
+                                        <i class="fa fa-user"></i>
+                                        <span></span>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="pos-r">                                        
+                                        <input ng-model="lastname"  id="form-lastname" type="text" name="form-username" placeholder="Lastname..." class="form-username form-control" required>
+                                        <i class="fa fa-user"></i>
+                                        <span></span>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="pos-r">                                        
+                                        <input ng-model="email"  id="form-emai" ng-blur="checkmail()" type="text"  placeholder="Email..." class="form-username form-control">
+                                        <i class="fa fa-user"></i>
+                                        <span></span>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="pos-r">                                        
+                                        <input ng-blur="checkusername()" ng-model="username"  id="form-username" type="text" name="form-username" placeholder="Username..." class="form-username form-control">
+                                        <i class="fa fa-user"></i>
+                                        <span></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="pos-r">                                    
+                                        <input ng-blur="checkpassword()" ng-model="password" id="form-password" type="password" name="form-password" placeholder="Password..." class="form-password form-control" >
+                                        <i class="fa fa-lock"></i>
+                                        <span></span>                                        
+                                    </div>
+                                </div>
+                                  
+
+                                <div class="form-group">     
+                                    <a ng-click = "createuser()" type="submit" class="btn btn-warning form-control"><strong>Sign up</strong></a>  
+                                </div>   
+                                                                              
+                            </form>
+                        </div>
+                    </div>
+                    <div class="login-footer text-center template">
+                        <h5 >Already have an account?<a href="login.html" class="bold"> Sign in </a>     </h5>
+                         
+                    </div>
+                </div>  
+
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <script>
+            var myApp = angular.module("myApp",[])
+            myApp.controller("signupController",function($scope,$http){
+                var ckeckedmail;
+                var ckeckedusername;
+                var ckeckedpassword;
+                $scope.checkmail = function(){
+                    if($scope.email != undefined){
+                        var onSuccessEmail = function(data, status, headers, config){
+                            checkedmail = 1;
+                        }
+                        var onErrorEmail= function(data, status, headers, config){
+                            checkedmail = 0;
+                            alert("Email doesn't exist");
+                        }
+                        dataObj = JSON.stringify({"email":$scope.email.toString()});
+                        console.log($scope.varemail);
+                        console.log(dataObj);
+                        var postReq = {
+                            method:"POST",
+                            url:"http://127.0.0.1:5000/checkmail",
+                            headers:{'Content-Type': "application/json"},
+                            data: dataObj
+                        };
+                        $http(postReq).success(onSuccessEmail).error(onErrorEmail);
+                }
+                }
+                $scope.showname = function(){
+                }
+                $scope.checkusername = function(){
+                    if($scope.username != undefined){
+                    var onSuccessUsername = function(data, status, headers, config){
+                        checkedusername = 1;
+                    }
+                    var onErrorUsername= function(data, status, headers, config){
+                        checkedmail =  0;
+                        alert("Username already exist");
+                    }
+                    dataObj = JSON.stringify({"username":$scope.username})
+                    var postReq = {
+                        method:"POST",
+                        url:"http://127.0.0.1:5000/checkusername",
+                        headers:{'Content-Type': "application/json" },
+                        data :dataObj
+                    };
+                    $http(postReq).success(onSuccessUsername).error(onErrorUsername);
+                }
+                }
+                $scope.checkpassword = function(){
+                    if($scope.password != undefined){
+                    var onSuccessPassword = function(data, status, headers, config){
+                        checkedpassword = 1;
+                    }
+                    var onErrorPassword= function(data, status, headers, config){
+                        checkedpassword = 0;
+                        alert("Please use a strong password of minimum length 8 and having mixture of numbers, capital case, special symbols");
+                    }
+                    dataObj = JSON.stringify({"password":$scope.password})
+                    var postReq = {
+                        method:"POST",
+                        url:"http://127.0.0.1:5000/checkpassword",
+                        headers:{'Content-Type': "application/json" },
+                        data :dataObj
+                    };
+                    $http(postReq).success(onSuccessPassword).error(onErrorPassword);
+                }
+            }
+                $scope.createuser = function(){
+                    $scope.checkmail();
+                    $scope.checkpassword();
+                    $scope.checkusername();
+                    if(checkedmail == 1 && checkedpassword == 1 && checkedusername == 1 && $scope.firstname != undefined && $scope.lastname != undefined ){
+                        var onSuccess = function(data, status, headers, config){
+                            window.location.href = "login.html"
+                        }
+                        var onError = function(data, status, headers, config){
+                            alert("You have entered wrong credentials");
+                        }
+                        console.log($scope.username);
+                        console.log($scope.password);
+                        console.log($scope.email);
+                        console.log($scope.firstname);
+                        console.log($scope.lastname);
+                        dataObj = JSON.stringify({"password":$scope.password.toString(),"username":$scope.username.toString(),"email":$scope.email.toString(),"firstname":$scope.firstname.toString(),"lastname":$scope.lastname.toString()})
+                        var postReq = {
+                            method:"POST",
+                            url:"http://127.0.0.1:5000/sign_up",
+                            headers:{'Content-Type': "application/json" },
+                            data :dataObj
+                        };
+                        $http(postReq).success(onSuccess).error(onError);
+                    }
+                }
+            });
+        </script>
+
+    </body>
+
+</html>
